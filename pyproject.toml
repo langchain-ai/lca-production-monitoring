@@ -1,0 +1,14 @@
+[project]
+name = "lca-production-monitoring"
+version = "0.1.0"
+description = "OfficeFlow agent with LangSmith production monitoring"
+requires-python = "==3.12.0"
+dependencies = [
+    "langchain",
+    "langchain-anthropic",
+    "langchain-community",
+    "python-dotenv",
+    "fastapi",
+    "uvicorn",
+    "ddtrace",
+]
