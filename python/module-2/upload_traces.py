@@ -1,4 +1,4 @@
-"""Load traces.json, shift timestamps to now, regenerate IDs, and upload via RunTree."""
+"""Load traces.json, shift timestamps to now, regenerate IDs, and upload."""
 
 import json
 from collections import defaultdict
@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langsmith import Client, uuid7
-from langsmith.run_trees import RunTree
 
 
 def parse_dt(s: str | None) -> datetime | None:
@@ -39,9 +38,15 @@ def main():
     print(f"Shifting timestamps by: {time_delta}")
 
     # Build ID map (uuid7 for time-ordering)
+    # For root runs, trace_id must equal id, so map both to the same uuid7.
     id_map = {}
     for run in runs:
-        for field in ("id", "trace_id", "parent_run_id"):
+        if run.get("parent_run_id") is None:
+            root_new_id = str(uuid7())
+            id_map[run["id"]] = root_new_id
+            id_map[run["trace_id"]] = root_new_id
+    for run in runs:
+        for field in ("id", "parent_run_id"):
             old_id = run.get(field)
             if old_id and old_id not in id_map:
                 id_map[old_id] = str(uuid7())
@@ -49,15 +54,18 @@ def main():
     # Group runs by trace and transform
     traces = defaultdict(list)
     for run in runs:
-        traces[run["trace_id"]].append({
+        trace_id = id_map[run["trace_id"]]
+        traces[trace_id].append({
             "id": id_map[run["id"]],
+            "trace_id": trace_id,
+            "dotted_order": None,  # populated below
             "parent_run_id": id_map.get(run["parent_run_id"]),
             "name": run["name"],
             "run_type": run["run_type"],
             "inputs": run["inputs"],
             "outputs": run.get("outputs"),
             "error": run.get("error"),
-            "extra": run.get("extra"),
+            "extra": run.get("extra") or {},
             "tags": run.get("tags"),
             "start_time": parse_dt(run["start_time"]) + time_delta,
             "end_time": parse_dt(run["end_time"]) + time_delta if run.get("end_time") else None,
@@ -66,51 +74,40 @@ def main():
     client = Client()
     print(f"Uploading {len(traces)} traces to project '{args.project}'...")
 
-    for i, trace_runs in enumerate(traces.values()):
-        # Sort by start_time, root first (no parent)
+    for i, (trace_id, trace_runs) in enumerate(traces.items()):
+        # Sort: root first, then children by start_time
         trace_runs.sort(key=lambda r: (r["parent_run_id"] is not None, r["start_time"]))
 
-        tree_map = {}
-        root_tree = None
-
+        # Build dotted_order for proper nesting
+        dotted_orders = {}
+        child_counters = defaultdict(int)
         for run in trace_runs:
+            ts = run["start_time"].strftime("%Y%m%dT%H%M%S%f") + "Z"
             if run["parent_run_id"] is None:
-                # Root run
-                root_tree = RunTree(
-                    id=run["id"],
-                    name=run["name"],
-                    run_type=run["run_type"],
-                    inputs=run["inputs"],
-                    start_time=run["start_time"],
-                    extra=run.get("extra"),
-                    tags=run.get("tags"),
-                    project_name=args.project,
-                    client=client,
-                )
-                tree_map[run["id"]] = root_tree
+                run["dotted_order"] = f"{ts}{run['id']}"
             else:
-                # Child run
-                parent = tree_map.get(run["parent_run_id"])
-                if parent:
-                    child = parent.create_child(
-                        name=run["name"],
-                        run_type=run["run_type"],
-                        run_id=run["id"],
-                        inputs=run["inputs"],
-                        start_time=run["start_time"],
-                        extra=run.get("extra"),
-                        tags=run.get("tags"),
-                    )
-                    tree_map[run["id"]] = child
+                parent_order = dotted_orders.get(run["parent_run_id"], "")
+                run["dotted_order"] = f"{parent_order}.{ts}{run['id']}"
+            dotted_orders[run["id"]] = run["dotted_order"]
 
-        # End all runs (children first)
-        for run in reversed(trace_runs):
-            tree = tree_map.get(run["id"])
-            if tree:
-                tree.end(outputs=run.get("outputs"), error=run.get("error"), end_time=run["end_time"])
-
-        if root_tree:
-            root_tree.post(exclude_child_runs=False)
+        # Upload each run individually
+        for run in trace_runs:
+            client.create_run(
+                id=run["id"],
+                trace_id=run["trace_id"],
+                dotted_order=run["dotted_order"],
+                parent_run_id=run["parent_run_id"],
+                name=run["name"],
+                run_type=run["run_type"],
+                inputs=run["inputs"],
+                outputs=run.get("outputs"),
+                error=run.get("error"),
+                extra=run.get("extra"),
+                tags=run.get("tags"),
+                start_time=run["start_time"],
+                end_time=run["end_time"],
+                project_name=args.project,
+            )
 
         if (i + 1) % 10 == 0:
             print(f"  Uploaded {i + 1}/{len(traces)} traces")
