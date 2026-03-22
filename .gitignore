@@ -2,3 +2,29 @@
 __pycache__/
 *.pyc
 .venv/
+
+# Exports & traces
+trace_exports/
+conversations/
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.py~
+
+# uv / Python
+*.egg-info/
+dist/
+.python-version
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Temp
+temp.txt
+
+# Claude Code
+.claude/
