@@ -14,4 +14,6 @@ dependencies = [
     "openai>=2.29.0",
     "numpy>=2.4.2",
     "langsmith>=0.7.12",
+    "click>=8.3.1",
+    "rich>=14.3.3",
 ]
