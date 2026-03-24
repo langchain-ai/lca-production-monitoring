@@ -3,15 +3,21 @@ Upload capstone CSA traces to LangSmith, preserving all fields including
 dotted_order, costs, and token counts.
 
 Usage:
-    uv run python upload_csa_traces.py --input trace_exports/rev3_csa_full --project my-project
-    uv run python upload_csa_traces.py --input traces.json --project my-project
+    uv run python upload_csa_traces.py --input capstone_traces.jsonl --project my-project
+    uv run python upload_csa_traces.py --input trace_exports/rev6_csa --project my-project
 
 Input can be:
+    - A single .jsonl file (flat list of runs, one per line) — recommended
     - A directory of .jsonl files (one per trace)
-    - A single .json or .jsonl file containing a flat list of runs
+
+The student-facing trace file is capstone_traces.jsonl in this directory.
+To prepare a new version: flatten a rev directory with:
+    cat trace_exports/rev<N>_csa/*.jsonl > trace_exports/rev<N>_csa/traces.jsonl
+Then copy to capstone_traces.jsonl when ready for students.
 
 Uses two-step batch_ingest_runs() create+update pattern for correct cost/token monitoring.
 Timestamps are shifted to within the last 24 hours so LangSmith accepts them.
+Feedback (thumbs_up_down) is applied to root runs if _feedback field is present.
 """
 
 import argparse
