@@ -1,0 +1,6 @@
+customer_id,name,segment,arr_usd,behavior,email,credit_card,address
+5356ce64-bebf-42bb-8a5f-269fe7fe90be,Wile E. Coyote,Enterprise,294842,"high spend, low success",wile.e.coyote@coyote-enterprises.toon,4111 1111 1111 1111,"1 Canyon Rd, Desert Southwest, AZ 00001"
+a4ca19d2-bdf7-4180-a1ce-8d5dc671ad92,Samuel 'Yosemite' Jackson,SMB,422632,impulsive high-impact,yosemite.sam@samsaloon.toon,4111 1111 1111 2222,"2 Gulch Ave, Tombstone, AZ 00002"
+81d01525-db46-4fba-bd52-02961c3a38d9,Elmer J. Fudd,SMB,393365,cautious ineffective,elmer.fudd@fuddhunting.toon,4111 1111 1111 3333,"3 Hunting Lane, Sherwood Forest, CT 00003"
+d27ba9ef-c0c6-4a82-81db-62774a7f6b01,Marvin Q. Martian,Enterprise,497714,low volume high cost,marvin.martian@mars-hq.toon,4111 1111 1111 4444,"4 Crater Blvd, Mars Colony, MC 00004"
+bf1beb04-725d-4c4f-89f8-8db68061af72,Sylvester B. Feline,Mid-Market,386731,frequent small purchases,sylvester.feline@puddytat.toon,4111 1111 1111 5555,"10th Floor, 5 Alley Way, Toontown, CA 00005"

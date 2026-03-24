@@ -1,0 +1,54 @@
+ACME SQL IMPORT GUIDE
+
+Files:
+- customers.csv
+- products.csv
+- orders.csv
+
+Steps:
+
+1. Create tables:
+
+CREATE TABLE customers (
+  customer_id TEXT PRIMARY KEY,
+  name TEXT,
+  segment TEXT,
+  arr_usd INTEGER,
+  behavior TEXT
+);
+
+CREATE TABLE products (
+  product_id TEXT PRIMARY KEY,
+  name TEXT,
+  category TEXT,
+  price_usd REAL,
+  weight_lbs REAL,
+  shipping_days INTEGER,
+  stock INTEGER
+);
+
+CREATE TABLE orders (
+  order_id TEXT PRIMARY KEY,
+  customer_id TEXT,
+  product_id TEXT,
+  quantity INTEGER,
+  total_price REAL,
+  order_date TEXT,
+  FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
+  FOREIGN KEY(product_id) REFERENCES products(product_id)
+);
+
+2. Import CSVs (example SQLite):
+
+.mode csv
+.import customers.csv customers
+.import products.csv products
+.import orders.csv orders
+
+3. Example query:
+
+SELECT c.name, p.name, o.quantity
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN products p ON o.product_id = p.product_id;
+
