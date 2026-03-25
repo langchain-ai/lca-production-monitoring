@@ -23,8 +23,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--project", default="ACME-prompt-injection-detection", help="Target project name")
-    parser.add_argument("--input", default="module4_traces.json", help="Input file path")
+    parser.add_argument("--project", default="ACME-security", help="Target project name")
+    parser.add_argument("--input", default="lesson1_traces.json", help="Input file path")
     args = parser.parse_args()
 
     with open(args.input) as f:
