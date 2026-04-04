@@ -7,6 +7,7 @@ dependencies = [
     "langchain",
     "langchain-anthropic",
     "langchain-community",
+    "langchain-core>=1.2.22",
     "python-dotenv",
     "fastapi",
     "uvicorn",
@@ -16,5 +17,8 @@ dependencies = [
     "langsmith>=0.7.12",
     "click>=8.3.1",
     "rich>=14.3.3",
+    "aiohttp>=3.13.4",
+    "pygments>=2.20.0",
+    "requests>=2.33.0",
 ]
 
