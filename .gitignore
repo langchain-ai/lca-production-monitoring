@@ -1,4 +1,12 @@
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+credentials.json
+token.json
+node_modules/
 __pycache__/
 *.pyc
 .venv/
