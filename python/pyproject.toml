@@ -12,7 +12,7 @@ dependencies = [
     "python-dotenv",
     "fastapi",
     "uvicorn",
-    "ddtrace",
+    "ddtrace>=4.8.2",
     "openai>=2.29.0",
     "numpy>=2.4.2",
     "langsmith>=0.8.18",
