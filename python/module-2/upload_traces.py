@@ -24,7 +24,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", default="ACME-product-analytics", help="Target project name")
-    parser.add_argument("--input", default="synthetic_traces.json", help="Input file path")
+    parser.add_argument("--input", default="module2_traces.json", help="Input file path")
     args = parser.parse_args()
 
     with open(args.input) as f:
