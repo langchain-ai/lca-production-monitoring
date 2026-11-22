@@ -1,9 +1,7 @@
 import argparse
 import asyncio
 import csv
-import os
 from functools import partial
-from pathlib import Path
 
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
@@ -16,9 +14,15 @@ from knowledge_base_tool import KnowledgeBase, SEARCH_KNOWLEDGE_BASE_TOOL
 from csa_prompt import CSA_PROMPT_TEMPLATE, PII_VERIFICATION_SECTION
 from customer_prompt import CUSTOMER_PROMPT_TEMPLATE
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from model_config import openai_chat_options
+
 load_dotenv()
 
-client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = AsyncOpenAI(**openai_chat_options())
 
 DB_PATH = str(Path(__file__).parent / "inventory" / "inventory.db")
 
@@ -141,7 +145,7 @@ async def main():
             return
 
     kb_dir = str(Path(__file__).parent / "knowledge_base")
-    kb = KnowledgeBase(client)
+    kb = KnowledgeBase(AsyncOpenAI())
     await kb.load(kb_dir)
     print()
 
