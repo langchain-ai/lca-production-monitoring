@@ -2,6 +2,8 @@
 
 ## Overview
 
+For direct OpenAI credentials or optional LangSmith Gateway chat routing, follow the [repository setup](../../../README.md#optional-langsmith-gateway-for-capstone-chat). Embeddings still require a direct OpenAI key; capstone feedback and tracing require LangSmith credentials independently.
+
 The capstone uses two AI agents conversing with each other to simulate realistic customer support interactions for ACME Supply Co. (a Looney Tunes-themed catalog of cartoon products).
 
 ### The Two Agents
